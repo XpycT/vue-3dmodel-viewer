@@ -32,7 +32,7 @@
                     return [
                         {
                             type: 'ambient',
-                            color: 'rgb(30, 30, 35)'
+                            color: 0x1e1e23
                         },
                         {
                             type: 'directional',
@@ -93,11 +93,11 @@
 
             window.addEventListener('resize', this.onResize, false);
 
-            var geo = new BoxGeometry(1, 1, 1)
-            var mat = new MeshLambertMaterial({color: 0xffffff})
-            var box = new Mesh(geo, mat)
-            box.castShadow = true
-            this.scene.add(box)
+            const geo = new BoxGeometry(1, 1, 1);
+            const mat = new MeshLambertMaterial({color: 0xffffff});
+            const box = new Mesh(geo, mat);
+            box.castShadow = true;
+            this.scene.add(box);
 
             this.animate();
         },
@@ -138,10 +138,10 @@
                     camera.position.z = 5;
                     camera.lookAt(new Vector3());
                 } else {
-                    camera.position.set(this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z)
-                    camera.rotation.set(this.cameraRotation.x, this.cameraRotation.y, this.cameraRotation.z)
-                    camera.up.set(this.cameraUp.x, this.cameraUp.y, this.cameraUp.z)
-                    camera.lookAt(new Vector3(this.cameraLookAt.x, this.cameraLookAt.y, this.cameraLookAt.z))
+                    camera.position.set(this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z);
+                    camera.rotation.set(this.cameraRotation.x, this.cameraRotation.y, this.cameraRotation.z);
+                    camera.up.set(this.cameraUp.x, this.cameraUp.y, this.cameraUp.z);
+                    camera.lookAt(new Vector3(this.cameraLookAt.x, this.cameraLookAt.y, this.cameraLookAt.z));
                 }
             },
             updateLights() {
