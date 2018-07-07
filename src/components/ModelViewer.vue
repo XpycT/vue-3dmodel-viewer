@@ -14,7 +14,7 @@
         HemisphereLight
     } from 'three'
 
-    import { OrbitControls } from './controls/OrbitControls'
+    import { OrbitControls } from '../controls/OrbitControls'
 
     import * as screenfull from 'screenfull';
 

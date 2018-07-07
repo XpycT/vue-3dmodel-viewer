@@ -1,4 +1,4 @@
-import ModelViewer from './model-viewer.vue';
+import ModelViewer from './components/ModelViewer.vue';
 
 const components = [
     ModelViewer

@@ -7,7 +7,7 @@
 <script>
     import { Vector3 } from 'three';
 
-    import ModelViewer from './model-viewer.vue'
+    import ModelViewer from '../src/components/ModelViewer.vue'
 
     export default {
         name: 'app',
