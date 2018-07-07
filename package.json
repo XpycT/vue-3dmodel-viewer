@@ -28,7 +28,7 @@
     "serve": "vue-cli-service serve examples/main.js",
     "build:examples": "vue-cli-service build examples/main.js",
     "build:lib": "vue-cli-service build --target lib --name ModelViewer src/components/ModelViewer.vue --dest lib",
-    "build": "npm run build:examples && npm run build:all",
+    "build": "npm run lint && npm run build:examples && npm run build:all",
     "build:all": "babel-node build/build.js --no-babelrc --presets=env,stage-2 --plugins=transform-runtime,transform-strict-mode,transform-es2015-modules-commonjs,transform-es2015-spread,transform-es2015-destructuring,transform-es2015-parameters,transform-async-to-generator",
     "lint": "vue-cli-service lint"
   },
