@@ -1,10 +1,19 @@
 {
   "name": "vue-3dmodel-viewer",
   "version": "0.1.0",
-  "private": true,
+  "description": "Three.js model viewer for Vue",
+  "keywords": [
+    "vue",
+    "three.js",
+    "component"
+  ],
+  "author": "Aleksandr Tar <XpycT.TOP@gmail.com>",
+  "repository": "https://github.com/XpycT/vue-3dmodel-viewer",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build:lib": "vue-cli-service build --target lib --name ModelViewer src/model-viewer.vue --dest lib",
+    "build:wc": "vue-cli-service build --target wc --name model-viewer src/model-viewer.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

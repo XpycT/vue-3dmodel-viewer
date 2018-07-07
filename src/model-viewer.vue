@@ -14,7 +14,7 @@
         HemisphereLight
     } from 'three'
 
-    import { OrbitControls } from '../controls/OrbitControls'
+    import { OrbitControls } from './controls/OrbitControls'
 
     import * as screenfull from 'screenfull';
 
@@ -33,11 +33,21 @@
             lights: {
                 type: Array,
                 default() {
-                    return [];
+                    return [
+                        {
+                            type: 'ambient',
+                            color: 0x1e1e23
+                        },
+                        {
+                            type: 'directional',
+                            color: 0xcfcfcf,
+                            position: new Vector3(20, 40, -15)
+                        }
+                    ];
                 }
             },
             backgroundColor: {
-                default: 0xffffff
+                default: 0x444444
             },
             backgroundAlpha: {
                 type: Number,
