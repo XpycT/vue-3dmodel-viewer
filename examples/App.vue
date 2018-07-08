@@ -17,6 +17,7 @@
           :show-controls="true"
           :visible-controls="visibleControls"
           :src="'models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf'"
+          :cubemap="cubemap"
         ></ModelViewer>
       </div>
     </section>
@@ -44,7 +45,7 @@
             skyColor: 0xbbbbff,
             groundColor: 0x444422,
             position: new Vector3(0,1,0)
-          },
+          }/*,
           {
             type: 'AmbientLight',
             color: 0xaaaaaa
@@ -54,8 +55,8 @@
             position: { x: 1, y: 1, z: 1 },
             color: 0xffffff,
             intensity: 0.8
-          }
-          /*{
+          }*/
+          ,{
             type: 'ambient',
             color: 0x1e1e23
           },
@@ -63,10 +64,18 @@
             type: 'directional',
             color: 0xcfcfcf,
             position: new Vector3(20, 40, -15)
-          }*/
+          }
         ],
         backgroundColor: 0x444444,
-        visibleControls: {help: true, fullscreen: true, download: true}
+        visibleControls: {help: true, fullscreen: true, download: true},
+        cubemap: [
+          'textures/cube/Bridge2/posx.jpg',
+          'textures/cube/Bridge2/negx.jpg',
+          'textures/cube/Bridge2/posy.jpg',
+          'textures/cube/Bridge2/negy.jpg',
+          'textures/cube/Bridge2/posz.jpg',
+          'textures/cube/Bridge2/negz.jpg',
+        ],
       }
     }
   }

@@ -4,15 +4,13 @@
     Vector3,
     Object3D,
     Scene,
-    Mesh,
-    BoxGeometry,
-    MeshLambertMaterial,
     WebGLRenderer,
     PerspectiveCamera,
     AmbientLight,
     PointLight,
     DirectionalLight,
-    HemisphereLight
+    HemisphereLight,
+    CubeTextureLoader
   } from 'three'
 
   import {OrbitControls} from '../controls/OrbitControls'
@@ -39,6 +37,24 @@
       },
       modelType: {
         type: String
+      },
+      position: {
+        type: Object,
+        default() {
+          return { x: 0, y: 0, z: 0 }
+        }
+      },
+      rotation: {
+        type: Object,
+        default() {
+          return { x: 0, y: 0, z: 0 }
+        }
+      },
+      scale: {
+        type: Object,
+        default() {
+          return { x: 1, y: 1, z: 1 }
+        }
       },
       lights: {
         type: Array,
@@ -92,6 +108,12 @@
       controllable: {
         type: Boolean,
         default: true
+      },
+      cubemap: {
+        type: Array,
+        default() {
+          return []
+        }
       }
     },
     data() {
@@ -114,6 +136,7 @@
         renderer: null,
         controls: null,
         allLights: [],
+        envMap: [],
         loader: null,
         reqId: null    // requestAnimationFrame id
       }
@@ -131,6 +154,7 @@
 
       this.renderer = new WebGLRenderer({antialias: true, alpha: true, canvas: this.$refs.canvas});
       this.renderer.shadowMap.enabled = true;
+      this.renderer.gammaOutput = true;
 
       this.scene.add( this.wrapper );
 
@@ -139,12 +163,6 @@
 
       window.addEventListener( 'keydown', this.onKeydown, false );
       window.addEventListener('resize', this.onResize, false);
-
-      /*const geo = new BoxGeometry(1, 1, 1);
-      const mat = new MeshLambertMaterial({color: 0xffffff});
-      const box = new Mesh(geo, mat);
-      box.castShadow = true;
-      this.scene.add(box);*/
 
       this.animate();
     },
@@ -158,10 +176,37 @@
       src() {
         this.load();
       },
+      rotation: {
+        deep: true,
+        handler( val ) {
+          if ( !this.object ) return;
+          this.object.rotation.set( val.x, val.y, val.z );
+        }
+      },
+      position: {
+        deep: true,
+        handler( val ) {
+          if ( !this.object ) return;
+          this.object.position.set( val.x, val.y, val.z );
+        }
+      },
+      scale: {
+        deep: true,
+        handler( val ) {
+          if ( !this.object ) return;
+          this.object.scale.set( val.x, val.y, val.z );
+        }
+      },
       lights: {
         deep: true,
         handler() {
           this.updateLights();
+        }
+      },
+      cubemap: {
+        deep: true,
+        handler() {
+          this.updateCubemaps();
         }
       },
       size: {
@@ -201,6 +246,7 @@
       },
       update() {
         this.updateRenderer();
+        this.updateCubemaps();
         this.updateCamera();
         this.updateLights();
         this.updateControls();
@@ -221,6 +267,12 @@
         renderer.setPixelRatio(window.devicePixelRatio || 1);
         renderer.setClearColor(new Color(this.backgroundColor).getHex());
         renderer.setClearAlpha(this.backgroundAlpha);
+      },
+      updateCubemaps() {
+        if(this.cubemap.length === 0) return;
+
+        this.envMap = new CubeTextureLoader().load( this.cubemap );
+        this.scene.background = this.envMap;
       },
       updateCamera() {
         const camera = this.camera;
@@ -338,11 +390,9 @@
           }
           this.addObject( object );
           this.$emit( 'on-load' );
-
-          console.log('on-load');
         }, xhr => {
           this.$emit( 'on-progress', xhr );
-          console.log('on-progress', xhr);
+          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
         }, err => {
           this.$emit( 'on-error', err );
           console.log( 'on-error', err);
