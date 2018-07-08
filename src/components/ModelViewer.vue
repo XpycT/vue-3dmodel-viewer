@@ -2,6 +2,7 @@
   import {
     Color,
     Vector3,
+    Object3D,
     Scene,
     Mesh,
     BoxGeometry,
@@ -15,6 +16,9 @@
   } from 'three'
 
   import {OrbitControls} from '../controls/OrbitControls'
+
+  import { GLTFLoader } from '../loaders';
+  import { getCenter } from '../utils'
 
   import * as screenfull from 'screenfull';
 
@@ -30,6 +34,12 @@
   export default {
     name: 'ModelViewer',
     props: {
+      src: {
+        type: String
+      },
+      modelType: {
+        type: String
+      },
       lights: {
         type: Array,
         default() {
@@ -98,11 +108,13 @@
           height: 0
         },
         object: null,
+        wrapper: new Object3D(),
         camera: new PerspectiveCamera(45, 1, 0.01, 100000),
         scene: new Scene(),
         renderer: null,
         controls: null,
         allLights: [],
+        loader: null,
         reqId: null    // requestAnimationFrame id
       }
     },
@@ -115,19 +127,24 @@
       }
       this.initSize = this.size;
 
+      this.loader = new GLTFLoader();
+
       this.renderer = new WebGLRenderer({antialias: true, alpha: true, canvas: this.$refs.canvas});
       this.renderer.shadowMap.enabled = true;
 
+      this.scene.add( this.wrapper );
+
+      this.load();
       this.update();
 
       window.addEventListener( 'keydown', this.onKeydown, false );
       window.addEventListener('resize', this.onResize, false);
 
-      const geo = new BoxGeometry(1, 1, 1);
+      /*const geo = new BoxGeometry(1, 1, 1);
       const mat = new MeshLambertMaterial({color: 0xffffff});
       const box = new Mesh(geo, mat);
       box.castShadow = true;
-      this.scene.add(box);
+      this.scene.add(box);*/
 
       this.animate();
     },
@@ -138,6 +155,9 @@
       window.removeEventListener('resize', this.onResize, false);
     },
     watch: {
+      src() {
+        this.load();
+      },
       lights: {
         deep: true,
         handler() {
@@ -184,6 +204,16 @@
         this.updateCamera();
         this.updateLights();
         this.updateControls();
+      },
+      updateModel() {
+        const object = this.object;
+        if ( !object ) return;
+        const position = this.position;
+        const rotation = this.rotation;
+        const scale = this.scale;
+        object.position.set( position.x, position.y, position.z );
+        object.rotation.set( rotation.x, rotation.y, rotation.z );
+        object.scale.set( scale.x, scale.y, scale.z );
       },
       updateRenderer() {
         const renderer = this.renderer;
@@ -295,7 +325,41 @@
       },
       downloadModel() {
 
-      }
+      },
+      load(){
+        if ( !this.src ) return;
+        if ( this.object ) {
+          this.wrapper.remove( this.object );
+        }
+        this.loader.load( this.src, ( ...args ) => {
+          const object = this.getObject( ...args );
+          if ( this.process ) {
+            this.process( object );
+          }
+          this.addObject( object );
+          this.$emit( 'on-load' );
+
+          console.log('on-load');
+        }, xhr => {
+          this.$emit( 'on-progress', xhr );
+          console.log('on-progress', xhr);
+        }, err => {
+          this.$emit( 'on-error', err );
+          console.log( 'on-error', err);
+        } );
+      },
+      getObject( object ) {
+        return object.scene
+      },
+      addObject( object ) {
+        const center = getCenter( object );
+        // correction position
+        this.wrapper.position.copy( center.negate() );
+        this.object = object;
+        this.wrapper.add( object );
+        this.updateCamera();
+        this.updateModel();
+      },
     }
   }
 </script>

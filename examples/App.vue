@@ -11,8 +11,13 @@
 
     <section class="section">
       <div class="container">
-        <ModelViewer :lights="lights" :background-color="backgroundColor" :show-controls="true"
-                     :visible-controls="visibleControls"></ModelViewer>
+        <ModelViewer
+          :lights="lights"
+          :background-color="backgroundColor"
+          :show-controls="true"
+          :visible-controls="visibleControls"
+          :src="'models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf'"
+        ></ModelViewer>
       </div>
     </section>
   </div>
@@ -35,6 +40,22 @@
       return {
         lights: [
           {
+            type: 'hemisphere',
+            skyColor: 0xbbbbff,
+            groundColor: 0x444422,
+            position: new Vector3(0,1,0)
+          },
+          {
+            type: 'AmbientLight',
+            color: 0xaaaaaa
+          },
+          {
+            type: 'DirectionalLight',
+            position: { x: 1, y: 1, z: 1 },
+            color: 0xffffff,
+            intensity: 0.8
+          }
+          /*{
             type: 'ambient',
             color: 0x1e1e23
           },
@@ -42,7 +63,7 @@
             type: 'directional',
             color: 0xcfcfcf,
             position: new Vector3(20, 40, -15)
-          }
+          }*/
         ],
         backgroundColor: 0x444444,
         visibleControls: {help: true, fullscreen: true, download: true}
