@@ -120,6 +120,7 @@
 
       this.update();
 
+      window.addEventListener( 'keydown', this.onKeydown, false );
       window.addEventListener('resize', this.onResize, false);
 
       const geo = new BoxGeometry(1, 1, 1);
@@ -132,6 +133,8 @@
     },
     beforeDestroy() {
       cancelAnimationFrame(this.reqId);
+
+      window.removeEventListener( 'keydown', this.onKeydown, false );
       window.removeEventListener('resize', this.onResize, false);
     },
     watch: {
@@ -160,6 +163,12 @@
     },
     computed: {},
     methods: {
+      onKeydown(event) {
+        console.log(event.which);
+        if(event.which === 32 ) { // space
+          this.resetCameraView();
+        }
+      },
       onResize() {
         if (this.width === undefined || this.height === undefined) {
           this.$nextTick(() => {
@@ -277,6 +286,9 @@
             this.updateRenderer();
           });
         }
+      },
+      resetCameraView() {
+        this.controls.reset();
       },
       toggleHelp() {
         this.showHelp = !this.showHelp;
