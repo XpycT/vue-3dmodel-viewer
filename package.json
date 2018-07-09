@@ -25,11 +25,12 @@
   "private": false,
   "license": "MIT",
   "scripts": {
-    "serve": "vue-cli-service serve examples/main.js",
-    "build:examples": "vue-cli-service build examples/main.js",
+    "demo:serve": "vue-cli-service serve examples/main.js",
+    "demo:build": "vue-cli-service build examples/main.js ",
+    "demo:deploy": "gh-pages -d dist",
     "build:lib": "vue-cli-service build --target lib --name ModelViewer src/components/ModelViewer.vue --dest lib",
-    "build": "npm run lint && npm run build:examples && npm run build:all",
     "build:all": "babel-node build/build.js --no-babelrc --presets=env,stage-2 --plugins=transform-runtime,transform-strict-mode,transform-es2015-modules-commonjs,transform-es2015-spread,transform-es2015-destructuring,transform-es2015-parameters,transform-async-to-generator",
+    "build": "npm run lint && npm run demo:build && npm run build:all",
     "lint": "vue-cli-service lint"
   },
   "pre-commit": [
@@ -57,6 +58,7 @@
     "babel-register": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "chalk": "latest",
+    "gh-pages": "^1.2.0",
     "rollup": "^0.62.0",
     "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-buble": "^0.19.2",
