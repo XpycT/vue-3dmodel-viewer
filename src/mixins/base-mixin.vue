@@ -284,33 +284,47 @@
 
         if(!this.datgui) return;
 
+        if(this.gui !== null) this.gui.destroy();
+
         this.gui = new dat.GUI({autoPlace: false});
         this.$refs.datgui.appendChild(this.gui.domElement);
 
         let parameters =
           {
-            position: { x: 0, y: 0, z: 0 },
-            rotation: { x: 0, y: 0, z: 0 },
+            model: {
+              position: { x: 0, y: 0, z: 0 },
+              rotation: { x: 0, y: 0, z: 0 },
+              wireframe: false
+            }
           };
 
-        let _folder1 = this.gui.addFolder('Position');
-        let modelX = _folder1.add( parameters.position, 'x' ).min(-200).max(200).step(1).listen();
-        let modelY = _folder1.add( parameters.position, 'y' ).min(-200).max(200).step(1).listen();
-        let modelZ = _folder1.add( parameters.position, 'z' ).min(-200).max(200).step(1).listen();
+        let _folder1 = this.gui.addFolder('Model');
+        let modelX = _folder1.add( parameters.model.position, 'x' ).name('position x').min(-200).max(200).step(1).listen();
+        let modelY = _folder1.add( parameters.model.position, 'y' ).name('position y').min(-200).max(200).step(1).listen();
+        let modelZ = _folder1.add( parameters.model.position, 'z' ).name('position z').min(-200).max(200).step(1).listen();
 
         modelX.onChange(value =>  this.object.position.x = value * Math.PI / 180 );
         modelY.onChange(value =>  this.object.position.y = value * Math.PI / 180 );
         modelZ.onChange(value =>  this.object.position.z = value * Math.PI / 180 );
 
-        let _folder2 = this.gui.addFolder('Rotation');
-        let modelRX = _folder2.add( parameters.rotation, 'x' ).min(0).max(360).step(1).listen();
-        let modelRY = _folder2.add( parameters.rotation, 'y' ).min(0).max(360).step(1).listen();
-        let modelRZ = _folder2.add( parameters.rotation, 'z' ).min(0).max(360).step(1).listen();
-        _folder2.open();
+        let modelRX = _folder1.add( parameters.model.rotation, 'x' ).name('rotation x').min(0).max(360).step(1).listen();
+        let modelRY = _folder1.add( parameters.model.rotation, 'y' ).name('rotation x').min(0).max(360).step(1).listen();
+        let modelRZ = _folder1.add( parameters.model.rotation, 'z' ).name('rotation x').min(0).max(360).step(1).listen();
 
         modelRX.onChange(value =>  this.object.rotation.x = value * Math.PI / 180 );
         modelRY.onChange(value =>  this.object.rotation.y = value * Math.PI / 180 );
         modelRZ.onChange(value =>  this.object.rotation.z = value * Math.PI / 180 );
+
+        let modelWireframe = _folder1.add( parameters.model, 'wireframe' ).name('wireframe').listen();
+        modelWireframe.onChange(value =>  {
+          this.object.traverse( child => {
+            if(child.isMesh){
+              child.material.wireframe = value;
+            }
+          })
+        } );
+
+        _folder1.open();
 
       },
       updateModel() {
