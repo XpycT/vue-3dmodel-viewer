@@ -10,14 +10,17 @@
     PointLight,
     DirectionalLight,
     HemisphereLight,
-    CubeTextureLoader
+    CubeTextureLoader,
   } from 'three'
 
   import {OrbitControls} from '../controls/OrbitControls'
 
   import { getCenter } from '../utils'
 
-  import * as screenfull from 'screenfull';
+  import * as screenfull from 'screenfull'
+
+  import * as Stats from 'stats.js'
+  import * as dat from 'dat.gui'
 
   const suportWebGL = (() => {
     try {
@@ -112,6 +115,14 @@
         default() {
           return []
         }
+      },
+      statsjs: {
+        type: Boolean,
+        default: false
+      },
+      datgui: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -136,7 +147,9 @@
         allLights: [],
         envMap: null,
         loader: null,
-        reqId: null    // requestAnimationFrame id
+        reqId: null,    // requestAnimationFrame id
+        stats: null,
+        gui: null
       }
     },
     mounted() {
@@ -220,6 +233,12 @@
       },
       backgroundColor() {
         this.updateRenderer();
+      },
+      statsjs() {
+        this.updateStats();
+      },
+      datgui() {
+        this.updateDatGui();
       }
     },
     computed: {},
@@ -246,6 +265,53 @@
         this.updateCamera();
         this.updateLights();
         this.updateControls();
+        this.updateStats();
+        this.updateDatGui();
+      },
+      updateStats(){
+        if(!this.statsjs) {
+          if(document.getElementById('stats-panel')) document.getElementById('stats-panel').remove();
+
+          return;
+        }
+
+        this.stats = new Stats();
+        this.stats.dom.id = 'stats-panel';
+        this.stats.dom.style.position = 'absolute';
+        this.$el.appendChild(this.stats.dom);
+      },
+      updateDatGui(){
+
+        if(!this.datgui) return;
+
+        this.gui = new dat.GUI({autoPlace: false});
+        this.$refs.datgui.appendChild(this.gui.domElement);
+
+        let parameters =
+          {
+            position: { x: 0, y: 0, z: 0 },
+            rotation: { x: 0, y: 0, z: 0 },
+          };
+
+        let _folder1 = this.gui.addFolder('Position');
+        let modelX = _folder1.add( parameters.position, 'x' ).min(-200).max(200).step(1).listen();
+        let modelY = _folder1.add( parameters.position, 'y' ).min(-200).max(200).step(1).listen();
+        let modelZ = _folder1.add( parameters.position, 'z' ).min(-200).max(200).step(1).listen();
+
+        modelX.onChange(value =>  this.object.position.x = value * Math.PI / 180 );
+        modelY.onChange(value =>  this.object.position.y = value * Math.PI / 180 );
+        modelZ.onChange(value =>  this.object.position.z = value * Math.PI / 180 );
+
+        let _folder2 = this.gui.addFolder('Rotation');
+        let modelRX = _folder2.add( parameters.rotation, 'x' ).min(0).max(360).step(1).listen();
+        let modelRY = _folder2.add( parameters.rotation, 'y' ).min(0).max(360).step(1).listen();
+        let modelRZ = _folder2.add( parameters.rotation, 'z' ).min(0).max(360).step(1).listen();
+        _folder2.open();
+
+        modelRX.onChange(value =>  this.object.rotation.x = value * Math.PI / 180 );
+        modelRY.onChange(value =>  this.object.rotation.y = value * Math.PI / 180 );
+        modelRZ.onChange(value =>  this.object.rotation.z = value * Math.PI / 180 );
+
       },
       updateModel() {
         const object = this.object;
@@ -332,7 +398,7 @@
         if (this.controllable && this.controls) return;
         if (this.controllable) {
           if (this.controls) return;
-          this.controls = new OrbitControls(this.camera, this.$el);
+          this.controls = new OrbitControls(this.camera, this.$refs.canvas);
           this.controls.type = 'orbit';
           this.controls.update();
         } else {
@@ -346,6 +412,8 @@
         this.reqId = requestAnimationFrame(this.animate);
         // required if controls.enableDamping or controls.autoRotate are set to true
         this.controls.update();
+
+        if(this.statsjs && this.stats !== null) this.stats.update();
 
         this.render();
       },
@@ -422,6 +490,16 @@
     position: relative;
     overflow: hidden;
     font-family: "Open Sans", sans-serif;
+  }
+
+  .webgl{
+    position:relative;
+  }
+
+  #datgui{
+    position: absolute;
+    top: 0;
+    right:0;
   }
 
   canvas {
@@ -511,16 +589,16 @@
     pointer-events: none;
   }
 
-  .tooltip {
+  .control-tooltip {
     position: relative;
   }
 
-  .tooltip.tooltip-down[data-tooltip]:after {
+  .control-tooltip.tooltip-down[data-tooltip]:after {
     top: 25px;
     bottom: auto;
   }
 
-  .tooltip.tooltip-down[data-tooltip]:before {
+  .control-tooltip.tooltip-down[data-tooltip]:before {
     top: 20px;
     bottom: auto;
     border-top: 0 solid transparent;
@@ -529,21 +607,21 @@
     border-left: 5px solid transparent;
   }
 
-  .tooltip.tooltip-right-bound[data-tooltip]:after {
+  .control-tooltip.tooltip-right-bound[data-tooltip]:after {
     transform: translateX(-75%);
   }
 
-  .tooltip.tooltip-left-bound[data-tooltip]:before {
+  .control-tooltip.tooltip-left-bound[data-tooltip]:before {
     transform: translateX(100%);
     left: 0;
   }
 
-  .tooltip.tooltip-left-bound[data-tooltip]:after {
+  .control-tooltip.tooltip-left-bound[data-tooltip]:after {
     transform: translateX(0%);
     left: 0;
   }
 
-  .tooltip[data-tooltip]:before {
+  .control-tooltip[data-tooltip]:before {
     position: absolute;
     bottom: 30px;
     left: 50%;
@@ -558,7 +636,7 @@
     transform: translateX(-50%);
   }
 
-  .tooltip[data-tooltip]:after {
+  .control-tooltip[data-tooltip]:after {
     position: absolute;
     bottom: 35px;
     left: 50%;
@@ -577,7 +655,7 @@
     transform: translateX(-50%);
   }
 
-  .tooltip:hover:before, .tooltip:hover:after {
+  .control-tooltip:hover:before, .control-tooltip:hover:after {
     opacity: 1;
   }
 
@@ -736,18 +814,19 @@
       </div>
     </div>
     <div class="webgl">
+      <div id="datgui" ref="datgui"></div>
       <canvas ref="canvas"></canvas>
       <div v-show="showControls" class="gui enabled">
         <div class="controls">
           <div class="general-controls">
-            <a class="control tooltip" data-tooltip="Help" v-on:click="toggleHelp" v-show="visibleControls.help">
+            <a class="control control-tooltip" data-tooltip="Help" v-on:click="toggleHelp" v-show="visibleControls.help">
               <i class="fas fa-question"></i>
             </a>
-            <a class="control tooltip" data-tooltip="Download" v-on:click="downloadModel"
+            <a class="control control-tooltip" data-tooltip="Download" v-on:click="downloadModel"
                v-show="visibleControls.download">
               <i class="fas fa-download"></i>
             </a>
-            <a class="control tooltip tooltip-right-bound" data-tooltip="Fullscreen"
+            <a class="control control-tooltip tooltip-right-bound" data-tooltip="Fullscreen"
                v-on:click="toggleFullscreen" v-show="visibleControls.fullscreen">
               <i class="fas" :class="fullscreen ? 'fa-compress' : 'fa-expand-arrows-alt'"></i></a>
           </div>

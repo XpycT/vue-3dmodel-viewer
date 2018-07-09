@@ -1,29 +1,27 @@
 <template>
-  <div id="app">
+  <section>
     <GithubCorner></GithubCorner>
-    <section class="section">
-      <div class="container">
-        <h1 class="title">
-          Vue.JS 3D Model Viewer Example
-        </h1>
+    <main role="main" class="container">
+      <div class="mt-5 text-center">
+        <h2>Vue.JS 3D Model Viewer Example</h2>
       </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <ModelViewer
-          :lights="lights"
-          :background-color="backgroundColor"
-          :show-controls="true"
-          :visible-controls="visibleControls"
-          :src="src"
-          :cubemap="cubemap"
-        ></ModelViewer>
+      <div class="row">
+        <div class="col-md-12">
+          <ModelViewer
+            :lights="lights"
+            :background-color="backgroundColor"
+            :show-controls="true"
+            :visible-controls="visibleControls"
+            :src="src"
+            :cubemap="cubemap"
+            :statsjs="statsjs"
+            :datgui="datgui"
+          ></ModelViewer>
+        </div>
       </div>
-    </section>
-  </div>
+    </main>
+  </section>
 </template>
-
 <script>
   import {Vector3} from 'three';
 
@@ -69,6 +67,8 @@
         src: 'models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf',
         backgroundColor: 0xffffff,
         visibleControls: {help: true, fullscreen: true, download: true},
+        statsjs: true,
+        datgui: true,
         cubemap: [
           'textures/cube/Bridge2/posx.jpg',
           'textures/cube/Bridge2/negx.jpg',

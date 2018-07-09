@@ -17,11 +17,9 @@
           this.wrapper.remove( this.object );
         }
         this.loader.load( this.src, data => {
-          console.log(this.envMap, this.envMap.length);
           if(this.envMap !== null){
             data.scene.traverse( child => {
               if(child.isMesh){
-                console.log(child);
                 child.material.envMap = this.envMap;
               }
             })

@@ -1,6 +1,6 @@
 <template>
   <a href="https://github.com/XpycT/vue-3dmodel-viewer" class="github-corner" aria-label="View source on Github">
-    <img src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    <!--<img src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">-->
 
     <svg width="80" height="80" viewBox="0 0 250 250"
          style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0; z-index: 20;"

@@ -25,6 +25,7 @@
   "private": false,
   "license": "MIT",
   "scripts": {
+    "serve": "npm run demo:serve",
     "demo:serve": "vue-cli-service serve examples/main.js",
     "demo:build": "vue-cli-service build examples/main.js ",
     "demo:deploy": "gh-pages -d dist",
@@ -37,7 +38,9 @@
     "lint"
   ],
   "dependencies": {
+    "dat.gui": "^0.7.2",
     "screenfull": "^3.3.2",
+    "stats.js": "^0.17.0",
     "three": "^0.94.0",
     "vue": "^2.5.16"
   },
