@@ -41,7 +41,8 @@ async function build () {
     const config = configs[key]
     console.log(chalk.cyan(`Building ${key}: ${config.output}`))
     const inputOptions = {
-      input: path.join(__dirname, '..', 'src', 'components', 'ModelViewer.vue'),
+      //input: path.join(__dirname, '..', 'src', 'components', 'ModelViewer.vue'),
+      input: path.join(__dirname, '..', 'src', 'index.js'),
       plugins: [
         resolve(),
         vue({
