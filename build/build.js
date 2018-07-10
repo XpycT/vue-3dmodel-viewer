@@ -3,6 +3,7 @@ import {uglify} from 'rollup-plugin-uglify'
 import vue from 'rollup-plugin-vue'
 import buble from 'rollup-plugin-buble'
 import resolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs';
 import postcss from 'rollup-plugin-postcss'
 import autoprefixer from 'autoprefixer'
 import {rollup} from 'rollup'
@@ -45,6 +46,7 @@ async function build () {
       input: path.join(__dirname, '..', 'src', 'index.js'),
       plugins: [
         resolve(),
+        commonjs(),
         vue({
           css: true
         }),
