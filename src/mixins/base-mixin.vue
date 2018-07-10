@@ -299,17 +299,17 @@
           };
 
         let _folder1 = this.gui.addFolder('Model');
-        let modelX = _folder1.add( parameters.model.position, 'x' ).name('position x').min(-200).max(200).step(1).listen();
-        let modelY = _folder1.add( parameters.model.position, 'y' ).name('position y').min(-200).max(200).step(1).listen();
-        let modelZ = _folder1.add( parameters.model.position, 'z' ).name('position z').min(-200).max(200).step(1).listen();
+        let modelX = _folder1.add( parameters.model.position, 'x' ).name('position x',-200,200).step(1).listen();
+        let modelY = _folder1.add( parameters.model.position, 'y' ).name('position y',-200,200).step(1).listen();
+        let modelZ = _folder1.add( parameters.model.position, 'z' ).name('position z',-200,200).step(1).listen();
 
         modelX.onChange(value =>  this.object.position.x = value * Math.PI / 180 );
         modelY.onChange(value =>  this.object.position.y = value * Math.PI / 180 );
         modelZ.onChange(value =>  this.object.position.z = value * Math.PI / 180 );
 
-        let modelRX = _folder1.add( parameters.model.rotation, 'x' ).name('rotation x').min(0).max(360).step(1).listen();
-        let modelRY = _folder1.add( parameters.model.rotation, 'y' ).name('rotation x').min(0).max(360).step(1).listen();
-        let modelRZ = _folder1.add( parameters.model.rotation, 'z' ).name('rotation x').min(0).max(360).step(1).listen();
+        let modelRX = _folder1.add( parameters.model.rotation, 'x' ).name('rotation x',0,360).step(1).listen();
+        let modelRY = _folder1.add( parameters.model.rotation, 'y' ).name('rotation y',0,360).step(1).listen();
+        let modelRZ = _folder1.add( parameters.model.rotation, 'z' ).name('rotation z',0,360).step(1).listen();
 
         modelRX.onChange(value =>  this.object.rotation.x = value * Math.PI / 180 );
         modelRY.onChange(value =>  this.object.rotation.y = value * Math.PI / 180 );
@@ -324,7 +324,12 @@
           })
         } );
 
-        _folder1.open();
+        let _folder2 = this.gui.addFolder('Camera');
+        _folder2.add( this.camera.position, 'x',-500,500).name('position x').step(1);
+        _folder2.add( this.camera.position, 'y',-500,500).name('position y').step(1);
+        _folder2.add( this.camera.position, 'z',-500,500).name('position z').step(1);
+
+        _folder2.open();
 
       },
       updateModel() {
@@ -413,6 +418,8 @@
         if (this.controllable) {
           if (this.controls) return;
           this.controls = new OrbitControls(this.camera, this.$refs.canvas);
+          this.controls.enableDamping = true;
+          this.controls.dampingFactor = 0.25;
           this.controls.type = 'orbit';
           this.controls.update();
         } else {
