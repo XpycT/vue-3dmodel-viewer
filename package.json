@@ -7,9 +7,9 @@
     "three.js",
     "component"
   ],
-  "main": "dist/vuejs-datepicker.js",
-  "module": "dist/vuejs-datepicker.esm.js",
-  "unpkg": "dist/vuejs-datepicker.min.js",
+  "main": "dist/vue-3dmodel-viewer.js",
+  "module": "dist/vue-3dmodel-viewer.esm.js",
+  "unpkg": "dist/vue-3dmodel-viewer.min.js",
   "files": [
     "src",
     "dist"
