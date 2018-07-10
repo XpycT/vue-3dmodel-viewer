@@ -5,16 +5,21 @@
   "keywords": [
     "vue",
     "three.js",
-    "component"
+    "component",
+    "3d",
+    "model",
+    "viewer"
   ],
   "main": "dist/vue-3dmodel-viewer.js",
   "module": "dist/vue-3dmodel-viewer.esm.js",
   "unpkg": "dist/vue-3dmodel-viewer.min.js",
+  "common": "dist/vue-3dmodel-viewer.common.js",
   "files": [
     "src",
     "dist"
   ],
   "author": "Aleksandr Tar <XpycT.TOP@gmail.com>",
+  "homepage": "https://github.com/XpycT/vue-3dmodel-viewer",
   "repository": {
     "type": "git",
     "url": "https://github.com/XpycT/vue-3dmodel-viewer"
@@ -29,9 +34,8 @@
     "demo:serve": "vue-cli-service serve examples/main.js",
     "demo:build": "vue-cli-service build examples/main.js ",
     "demo:deploy": "gh-pages -d dist",
-    "build:lib": "vue-cli-service build --target lib --name ModelViewer src/components/ModelViewer.vue --dest lib",
-    "build:all": "babel-node build/build.js --no-babelrc --presets=env,stage-2 --plugins=transform-runtime,transform-strict-mode,transform-es2015-modules-commonjs,transform-es2015-spread,transform-es2015-destructuring,transform-es2015-parameters,transform-async-to-generator",
-    "build": "npm run lint && npm run demo:build && npm run build:all",
+    "build": "babel-node build/build.js --no-babelrc --presets=env,stage-2 --plugins=transform-runtime,transform-strict-mode,transform-es2015-modules-commonjs,transform-es2015-spread,transform-es2015-destructuring,transform-es2015-parameters,transform-async-to-generator",
+    "build:all": "npm run lint && npm run demo:build && npm run build",
     "lint": "vue-cli-service lint"
   },
   "pre-commit": [

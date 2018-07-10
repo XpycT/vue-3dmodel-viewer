@@ -9,30 +9,30 @@ import autoprefixer from 'autoprefixer'
 import {rollup} from 'rollup'
 import chalk from 'chalk'
 
-const version = require('../package.json').version;
+const pkg = require('../package.json');
 const banner =
   '/*!\n' +
-  ' * vue-3dmodel-viewer v' + version + '\n' +
+  ' * vue-3dmodel-viewer v' + pkg.version + ', ' + pkg.description + '\n' +
   ' * (c) ' + new Date().getFullYear() + ' Aleksandr Tar <XpycT.TOP@gmail.com>\n' +
   ' * Released under the MIT License.\n' +
   ' */'
 
 const configs = {
   umd: {
-    output: 'vue-3dmodel-viewer.js',
+    output: pkg.main,
     format: 'umd'
   },
   umdMin: {
-    output: 'vue-3dmodel-viewer.min.js',
+    output: pkg.unpkg,
     format: 'umd',
     plugins: [uglify()]
   },
   cjs: {
-    output: 'vue-3dmodel-viewer.common.js',
+    output: pkg.common,
     format: 'cjs'
   },
   esm: {
-    output: 'vue-3dmodel-viewer.esm.js',
+    output: pkg.module,
     format: 'es'
   }
 }
@@ -62,10 +62,10 @@ async function build () {
     }
     const bundle = await rollup(inputOptions)
     const outputOptions = {
-      file: path.join(__dirname, '..', 'dist', config.output),
+      file: path.join(__dirname, '..', config.output),
       format: config.format,
       banner: banner,
-      name: 'vue3dModelViewer'
+      name: 'Vue3DModelViewer'
     }
     await bundle.write(outputOptions)
   })
