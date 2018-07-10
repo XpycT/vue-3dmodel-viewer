@@ -4,6 +4,8 @@
 <a href="https://travis-ci.org/XpycT/vue-3dmodel-viewer"><img src="https://travis-ci.org/XpycT/vue-3dmodel-viewer.svg?branch=master" alt="Build"></a>
 </p>
 
+## Overview
+
 Vue.JS 3D Model Viewer component, based on THREE.js, inspired by [model-tag](https://github.com/mrdoob/model-tag) and [Sketchfab](https://sketchfab.com/models?features=downloadable&sort_by=-likeCount&type=models)
 
 [DEMO](https://xpyct.github.io/vue-3dmodel-viewer/)
