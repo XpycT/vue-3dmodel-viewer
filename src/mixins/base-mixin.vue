@@ -278,6 +278,7 @@
         this.stats = new Stats();
         this.stats.dom.id = 'stats-panel';
         this.stats.dom.style.position = 'absolute';
+        this.stats.visible = true;
         this.$el.appendChild(this.stats.dom);
       },
       updateDatGui(){
@@ -287,33 +288,33 @@
         if(this.gui !== null) this.gui.destroy();
 
         this.gui = new dat.GUI({autoPlace: false});
+        this.gui.closed = true;
         this.$refs.datgui.appendChild(this.gui.domElement);
 
         let parameters =
           {
             model: {
+              scale: { x: 1, y: 1, z: 1 },
               position: { x: 0, y: 0, z: 0 },
               rotation: { x: 0, y: 0, z: 0 },
               wireframe: false
             }
           };
 
+        let de2ra = function(degree) { return degree*(Math.PI/180);};
+
         let _folder1 = this.gui.addFolder('Model');
-        let modelX = _folder1.add( parameters.model.position, 'x' ).name('position x',-200,200).step(1).listen();
-        let modelY = _folder1.add( parameters.model.position, 'y' ).name('position y',-200,200).step(1).listen();
-        let modelZ = _folder1.add( parameters.model.position, 'z' ).name('position z',-200,200).step(1).listen();
+        _folder1.add( parameters.model.scale, 'x',0.1, 5).name('scaleX').onChange(value =>  this.object.scale.x = value );
+        _folder1.add( parameters.model.scale, 'y',0.1, 5).name('scaleY').onChange(value =>  this.object.scale.y = value );
+        _folder1.add( parameters.model.scale, 'z',0.1, 5).name('scaleZ').onChange(value =>  this.object.scale.z = value );
 
-        modelX.onChange(value =>  this.object.position.x = value * Math.PI / 180 );
-        modelY.onChange(value =>  this.object.position.y = value * Math.PI / 180 );
-        modelZ.onChange(value =>  this.object.position.z = value * Math.PI / 180 );
+        _folder1.add( parameters.model.position, 'x',-150,150).name('positionX').onChange(value =>  this.object.position.x = de2ra(value) );
+        _folder1.add( parameters.model.position, 'y',-150,150).name('positionY').onChange(value =>  this.object.position.y = de2ra(value) );
+        _folder1.add( parameters.model.position, 'z',-150,150).name('positionZ').onChange(value =>  this.object.position.z = de2ra(value) );
 
-        let modelRX = _folder1.add( parameters.model.rotation, 'x' ).name('rotation x',0,360).step(1).listen();
-        let modelRY = _folder1.add( parameters.model.rotation, 'y' ).name('rotation y',0,360).step(1).listen();
-        let modelRZ = _folder1.add( parameters.model.rotation, 'z' ).name('rotation z',0,360).step(1).listen();
-
-        modelRX.onChange(value =>  this.object.rotation.x = value * Math.PI / 180 );
-        modelRY.onChange(value =>  this.object.rotation.y = value * Math.PI / 180 );
-        modelRZ.onChange(value =>  this.object.rotation.z = value * Math.PI / 180 );
+        _folder1.add( parameters.model.rotation, 'x',-180, 180).name('rotationX').onChange(value =>  this.object.rotation.x = de2ra(value) );
+        _folder1.add( parameters.model.rotation, 'y',-180, 180).name('rotationY').onChange(value =>  this.object.rotation.y = de2ra(value) );
+        _folder1.add( parameters.model.rotation, 'z',-180, 180).name('rotationZ').onChange(value =>  this.object.rotation.z = de2ra(value) );
 
         let modelWireframe = _folder1.add( parameters.model, 'wireframe' ).name('wireframe').listen();
         modelWireframe.onChange(value =>  {
@@ -325,11 +326,9 @@
         } );
 
         let _folder2 = this.gui.addFolder('Camera');
-        _folder2.add( this.camera.position, 'x',-500,500).name('position x').step(1);
-        _folder2.add( this.camera.position, 'y',-500,500).name('position y').step(1);
-        _folder2.add( this.camera.position, 'z',-500,500).name('position z').step(1);
-
-        _folder2.open();
+        _folder2.add( this.camera.position, 'x',-20,20).name('position x');
+        _folder2.add( this.camera.position, 'y',-20,20).name('position y');
+        _folder2.add( this.camera.position, 'z',-20,20).name('position z');
 
       },
       updateModel() {
