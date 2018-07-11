@@ -55,7 +55,6 @@ export default [{
   plugins,
   output: [
     {file: pkg.module, format: 'es', sourcemap: true, banner},
-    {file: pkg.common, format: 'cjs', sourcemap: true, banner},
     {file: pkg.main, format: 'umd', sourcemap: true, banner, name: "Vue3DModelViewer"}
   ]
 }, {

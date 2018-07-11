@@ -17,9 +17,9 @@
 
   import { getCenter } from '../utils'
 
-  import * as screenfull from 'screenfull'
+  import ScreenFull from 'screenfull-es6'
 
-  import * as Stats from 'stats.js'
+  import Stats from 'stats.js'
   import * as dat from 'dat.gui'
 
   const suportWebGL = (() => {
@@ -442,12 +442,12 @@
         this.renderer.render(this.scene, this.camera)
       },
       toggleFullscreen() {
-        if (screenfull.enabled) {
-          screenfull.toggle(this.$el);
-          screenfull.on('change', () => {
-            this.fullscreen = screenfull.isFullscreen;
+        if (ScreenFull.enabled) {
+          ScreenFull.toggle(this.$el);
+          ScreenFull.on('change', () => {
+            this.fullscreen = ScreenFull.isFullscreen;
 
-            if (!screenfull.isFullscreen) this.size = this.initSize;
+            if (!ScreenFull.isFullscreen) this.size = this.initSize;
 
             this.updateCamera();
             this.updateRenderer();

@@ -27,7 +27,9 @@
 
   import GithubCorner from './components/GithubCorner.vue';
 
-  import ModelViewer from '../src/components/ModelViewer.vue'
+  import ModelViewer from '../src/components/ModelViewer.vue' //develop
+  //import {ModelViewer} from '../dist/vue-3dmodel-viewer.esm' //webpack test
+  //import { ModelViewer } from './../'; // for test
 
   export default {
     name: 'app',

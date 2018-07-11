@@ -12,8 +12,8 @@
   ],
   "main": "dist/vue-3dmodel-viewer.js",
   "module": "dist/vue-3dmodel-viewer.esm.js",
+  "jsnext:main": "dist/vue-3dmodel-viewer.esm.js",
   "unpkg": "dist/vue-3dmodel-viewer.min.js",
-  "common": "dist/vue-3dmodel-viewer.common.js",
   "files": [
     "src",
     "dist"
@@ -43,7 +43,7 @@
   ],
   "dependencies": {
     "dat.gui": "^0.7.2",
-    "screenfull": "^3.3.2",
+    "screenfull-es6": "^0.1.1",
     "stats.js": "^0.17.0",
     "three": "^0.94.0",
     "vue": "^2.5.16"
