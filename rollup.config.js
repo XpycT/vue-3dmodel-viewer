@@ -46,7 +46,11 @@ let plugins = [
   buble({
     objectAssign: 'Object.assign'
   }),
-  resolve(),
+  resolve({
+    customResolveOptions: {
+      moduleDirectory: 'node_modules'
+    }
+  }),
   commonjs()
 ];
 

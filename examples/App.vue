@@ -28,6 +28,7 @@
   import GithubCorner from './components/GithubCorner.vue';
 
   import ModelViewer from '../src/components/ModelViewer.vue'
+  //import { ModelViewer } from '../dist/vue-3dmodel-viewer.esm';
 
   export default {
     name: 'app',

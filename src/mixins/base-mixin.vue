@@ -19,7 +19,7 @@
 
   import * as screenfull from 'screenfull'
 
-  import * as Stats from 'stats.js'
+  import Stats from 'stats.js'
   import * as dat from 'dat.gui'
 
   const suportWebGL = (() => {

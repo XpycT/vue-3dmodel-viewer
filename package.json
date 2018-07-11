@@ -12,6 +12,7 @@
   ],
   "main": "dist/vue-3dmodel-viewer.js",
   "module": "dist/vue-3dmodel-viewer.esm.js",
+  "jsnext:main": "dist/vue-3dmodel-viewer.esm.js",
   "unpkg": "dist/vue-3dmodel-viewer.min.js",
   "common": "dist/vue-3dmodel-viewer.common.js",
   "files": [
@@ -34,9 +35,10 @@
     "demo:serve": "vue-cli-service serve examples/main.js",
     "demo:build": "vue-cli-service build examples/main.js ",
     "demo:deploy": "gh-pages -d dist",
-    "build": "rollup -c",
-    "build:all": "npm run lint && npm run demo:build && npm run build",
-    "lint": "vue-cli-service lint"
+    "prebuild": "shx rm -rf dist && npm run lint",
+    "build": "git rev-parse HEAD > .commithash && rollup -c",
+    "lint": "vue-cli-service lint",
+    "ci": "npm run lint && npm run build"
   },
   "pre-commit": [
     "lint"
@@ -66,6 +68,7 @@
     "rollup-plugin-replace": "^2.0.0",
     "rollup-plugin-uglify": "^4.0.0",
     "rollup-plugin-vue": "^4.3.0",
+    "shx": "^0.3.2",
     "vue-template-compiler": "^2.5.16"
   },
   "engines": {

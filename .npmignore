@@ -3,3 +3,4 @@
 .editorconfig
 .eslintrc.js
 .gitattributes
+.commithash
