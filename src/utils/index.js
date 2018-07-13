@@ -6,7 +6,7 @@ const box = new Box3();
 
 function getSize(object) {
   box.setFromObject(object);
-  return box.getSize();
+  return box.getSize(new Vector3());
 }
 
 function getCenter(object) {

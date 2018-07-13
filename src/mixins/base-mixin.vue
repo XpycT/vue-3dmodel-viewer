@@ -1,6 +1,8 @@
 <script>
   import {
+    Clock,
     Color,
+    RGBFormat,
     Vector3,
     Object3D,
     Scene,
@@ -15,7 +17,7 @@
 
   import {OrbitControls} from '../controls/OrbitControls'
 
-  import { getCenter } from '../utils'
+  import {getCenter, getSize} from '../utils'
 
   import ScreenFull from 'screenfull-es6'
 
@@ -36,26 +38,31 @@
       src: {
         type: String
       },
-      modelType: {
-        type: String
-      },
       position: {
         type: Object,
         default() {
-          return { x: 0, y: 0, z: 0 }
+          return {x: 0, y: 0, z: 0}
         }
       },
       rotation: {
         type: Object,
         default() {
-          return { x: 0, y: 0, z: 0 }
+          return {x: 0, y: 0, z: 0}
         }
       },
       scale: {
         type: Object,
         default() {
-          return { x: 1, y: 1, z: 1 }
+          return {x: 1, y: 1, z: 1}
         }
+      },
+      animationTime: {
+        type: Number,
+        default: 0
+      },
+      playAnimation: {
+        type: Boolean,
+        default: true
       },
       lights: {
         type: Array,
@@ -147,7 +154,9 @@
         allLights: [],
         envMap: null,
         loader: null,
+        mixer: null,
         reqId: null,    // requestAnimationFrame id
+        clock: new Clock(),
         stats: null,
         gui: null
       }
@@ -164,13 +173,15 @@
       this.renderer = new WebGLRenderer({antialias: true, alpha: true, canvas: this.$refs.canvas});
       this.renderer.shadowMap.enabled = false;
       this.renderer.gammaOutput = false;
+      //this.renderer.physicallyCorrectLights = true;
 
-      this.scene.add( this.wrapper );
+      this.scene.background = new Color(this.backgroundColor).getHex();
+      this.scene.add(this.wrapper);
 
       this.load();
       this.update();
 
-      window.addEventListener( 'keydown', this.onKeydown, false );
+      window.addEventListener('keydown', this.onKeydown, false);
       window.addEventListener('resize', this.onResize, false);
 
       this.animate();
@@ -178,7 +189,7 @@
     beforeDestroy() {
       cancelAnimationFrame(this.reqId);
 
-      window.removeEventListener( 'keydown', this.onKeydown, false );
+      window.removeEventListener('keydown', this.onKeydown, false);
       window.removeEventListener('resize', this.onResize, false);
     },
     watch: {
@@ -187,23 +198,23 @@
       },
       rotation: {
         deep: true,
-        handler( val ) {
-          if ( !this.object ) return;
-          this.object.rotation.set( val.x, val.y, val.z );
+        handler(val) {
+          if (!this.object) return;
+          this.object.rotation.set(val.x, val.y, val.z);
         }
       },
       position: {
         deep: true,
-        handler( val ) {
-          if ( !this.object ) return;
-          this.object.position.set( val.x, val.y, val.z );
+        handler(val) {
+          if (!this.object) return;
+          this.object.position.set(val.x, val.y, val.z);
         }
       },
       scale: {
         deep: true,
-        handler( val ) {
-          if ( !this.object ) return;
-          this.object.scale.set( val.x, val.y, val.z );
+        handler(val) {
+          if (!this.object) return;
+          this.object.scale.set(val.x, val.y, val.z);
         }
       },
       lights: {
@@ -245,7 +256,7 @@
     methods: {
       onKeydown(event) {
         console.log(event.which);
-        if(event.which === 32 ) { // space
+        if (event.which === 32) { // space
           this.resetCameraView();
         }
       },
@@ -268,9 +279,9 @@
         this.updateStats();
         this.updateDatGui();
       },
-      updateStats(){
-        if(!this.statsjs) {
-          if(document.getElementById('stats-panel')) document.getElementById('stats-panel').remove();
+      updateStats() {
+        if (!this.statsjs) {
+          if (document.getElementById('stats-panel')) document.getElementById('stats-panel').remove();
 
           return;
         }
@@ -281,11 +292,11 @@
         this.stats.visible = true;
         this.$el.appendChild(this.stats.dom);
       },
-      updateDatGui(){
+      updateDatGui() {
 
-        if(!this.datgui) return;
+        if (!this.datgui) return;
 
-        if(this.gui !== null) this.gui.destroy();
+        if (this.gui !== null) this.gui.destroy();
 
         this.gui = new dat.GUI({autoPlace: false});
         this.gui.closed = true;
@@ -294,52 +305,54 @@
         let parameters =
           {
             model: {
-              scale: { x: 1, y: 1, z: 1 },
-              position: { x: 0, y: 0, z: 0 },
-              rotation: { x: 0, y: 0, z: 0 },
+              scale: {x: 1, y: 1, z: 1},
+              position: {x: 0, y: 0, z: 0},
+              rotation: {x: 0, y: 0, z: 0},
               wireframe: false
             }
           };
 
-        let de2ra = function(degree) { return degree*(Math.PI/180);};
+        let de2ra = function (degree) {
+          return degree * (Math.PI / 180);
+        };
 
         let _folder1 = this.gui.addFolder('Model');
-        _folder1.add( parameters.model.scale, 'x',0.1, 5).name('scaleX').onChange(value =>  this.object.scale.x = value );
-        _folder1.add( parameters.model.scale, 'y',0.1, 5).name('scaleY').onChange(value =>  this.object.scale.y = value );
-        _folder1.add( parameters.model.scale, 'z',0.1, 5).name('scaleZ').onChange(value =>  this.object.scale.z = value );
+        _folder1.add(parameters.model.scale, 'x', 0.1, 5).name('scaleX').onChange(value => this.object.scale.x = value);
+        _folder1.add(parameters.model.scale, 'y', 0.1, 5).name('scaleY').onChange(value => this.object.scale.y = value);
+        _folder1.add(parameters.model.scale, 'z', 0.1, 5).name('scaleZ').onChange(value => this.object.scale.z = value);
 
-        _folder1.add( parameters.model.position, 'x',-150,150).name('positionX').onChange(value =>  this.object.position.x = de2ra(value) );
-        _folder1.add( parameters.model.position, 'y',-150,150).name('positionY').onChange(value =>  this.object.position.y = de2ra(value) );
-        _folder1.add( parameters.model.position, 'z',-150,150).name('positionZ').onChange(value =>  this.object.position.z = de2ra(value) );
+        _folder1.add(parameters.model.position, 'x', -150, 150).name('positionX').onChange(value => this.object.position.x = de2ra(value));
+        _folder1.add(parameters.model.position, 'y', -150, 150).name('positionY').onChange(value => this.object.position.y = de2ra(value));
+        _folder1.add(parameters.model.position, 'z', -150, 150).name('positionZ').onChange(value => this.object.position.z = de2ra(value));
 
-        _folder1.add( parameters.model.rotation, 'x',-180, 180).name('rotationX').onChange(value =>  this.object.rotation.x = de2ra(value) );
-        _folder1.add( parameters.model.rotation, 'y',-180, 180).name('rotationY').onChange(value =>  this.object.rotation.y = de2ra(value) );
-        _folder1.add( parameters.model.rotation, 'z',-180, 180).name('rotationZ').onChange(value =>  this.object.rotation.z = de2ra(value) );
+        _folder1.add(parameters.model.rotation, 'x', -180, 180).name('rotationX').onChange(value => this.object.rotation.x = de2ra(value));
+        _folder1.add(parameters.model.rotation, 'y', -180, 180).name('rotationY').onChange(value => this.object.rotation.y = de2ra(value));
+        _folder1.add(parameters.model.rotation, 'z', -180, 180).name('rotationZ').onChange(value => this.object.rotation.z = de2ra(value));
 
-        let modelWireframe = _folder1.add( parameters.model, 'wireframe' ).name('wireframe').listen();
-        modelWireframe.onChange(value =>  {
-          this.object.traverse( child => {
-            if(child.isMesh){
+        let modelWireframe = _folder1.add(parameters.model, 'wireframe').name('wireframe').listen();
+        modelWireframe.onChange(value => {
+          this.object.traverse(child => {
+            if (child.isMesh) {
               child.material.wireframe = value;
             }
           })
-        } );
+        });
 
         let _folder2 = this.gui.addFolder('Camera');
-        _folder2.add( this.camera.position, 'x',-20,20).name('position x');
-        _folder2.add( this.camera.position, 'y',-20,20).name('position y');
-        _folder2.add( this.camera.position, 'z',-20,20).name('position z');
+        _folder2.add(this.camera.position, 'x', -20, 20).name('position x');
+        _folder2.add(this.camera.position, 'y', -20, 20).name('position y');
+        _folder2.add(this.camera.position, 'z', -20, 20).name('position z');
 
       },
       updateModel() {
         const object = this.object;
-        if ( !object ) return;
+        if (!object) return;
         const position = this.position;
         const rotation = this.rotation;
         const scale = this.scale;
-        object.position.set( position.x, position.y, position.z );
-        object.rotation.set( rotation.x, rotation.y, rotation.z );
-        object.scale.set( scale.x, scale.y, scale.z );
+        object.position.set(position.x, position.y, position.z);
+        object.rotation.set(rotation.x, rotation.y, rotation.z);
+        object.scale.set(scale.x, scale.y, scale.z);
       },
       updateRenderer() {
         const renderer = this.renderer;
@@ -349,23 +362,30 @@
         renderer.setClearAlpha(this.backgroundAlpha);
       },
       updateCubemaps() {
-        if(this.cubemap.length === 0) return;
+        if (this.cubemap.length === 0) return;
 
-        this.envMap = new CubeTextureLoader().load( this.cubemap );
+        this.envMap = new CubeTextureLoader().load(this.cubemap);
+        this.envMap.format = RGBFormat;
         this.scene.background = this.envMap;
       },
       updateCamera() {
         const camera = this.camera;
+        const object = this.object;
+
         camera.aspect = this.size.width / this.size.height;
         camera.updateProjectionMatrix();
+
         if (!this.cameraLookAt && !this.cameraPosition && !this.cameraRotation && !this.cameraUp) {
-          camera.position.set(1, 1, -2);
-          camera.position.z = 5;
+          if (!object) return;
+          const distance = getSize(object).length();
+          camera.position.set(0, 0, 0);
+          camera.position.z = distance;
           camera.lookAt(new Vector3());
         } else {
           camera.position.set(this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z);
           camera.rotation.set(this.cameraRotation.x, this.cameraRotation.y, this.cameraRotation.z);
           camera.up.set(this.cameraUp.x, this.cameraUp.y, this.cameraUp.z);
+
           camera.lookAt(new Vector3(this.cameraLookAt.x, this.cameraLookAt.y, this.cameraLookAt.z));
         }
       },
@@ -433,7 +453,9 @@
         // required if controls.enableDamping or controls.autoRotate are set to true
         this.controls.update();
 
-        if(this.statsjs && this.stats !== null) this.stats.update();
+        if (this.statsjs && this.stats !== null) this.stats.update();
+
+        if (this.mixer) this.mixer.update(this.clock.getDelta());
 
         this.render();
       },
@@ -462,35 +484,36 @@
       downloadModel() {
 
       },
-      load(){
-        if ( !this.src ) return;
-        if ( this.object ) {
-          this.wrapper.remove( this.object );
+      load() {
+        if (!this.src) return;
+        if (this.object) {
+          this.wrapper.remove(this.object);
         }
-        this.loader.load( this.src, ( ...args ) => {
-          const object = this.getObject( ...args );
-          if ( this.process ) {
-            this.process( object );
+        this.loader.load(this.src, (...args) => {
+          const object = this.getObject(...args);
+          if (this.process) {
+            this.process(object);
           }
-          this.addObject( object );
-          this.$emit( 'on-load' );
+          this.addObject(object);
+          this.$emit('on-load');
         }, xhr => {
-          this.$emit( 'on-progress', xhr );
-          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+          this.$emit('on-progress', xhr);
+          console.log((xhr.loaded / xhr.total * 100) + '% loaded');
         }, err => {
-          this.$emit( 'on-error', err );
-          console.log( 'on-error', err);
-        } );
+          this.$emit('on-error', err);
+          console.log('on-error', err);
+        });
       },
-      getObject( object ) {
+      getObject(object) {
         return object
       },
-      addObject( object ) {
-        const center = getCenter( object );
+      addObject(object) {
+        const center = getCenter(object);
         // correction position
-        this.wrapper.position.copy( center.negate() );
+        this.wrapper.position.copy(center.negate());
         this.object = object;
-        this.wrapper.add( object );
+        this.wrapper.add(object);
+
         this.updateCamera();
         this.updateModel();
       },
@@ -512,14 +535,14 @@
     font-family: "Open Sans", sans-serif;
   }
 
-  .webgl{
-    position:relative;
+  .webgl {
+    position: relative;
   }
 
-  #datgui{
+  #datgui {
     position: absolute;
     top: 0;
-    right:0;
+    right: 0;
   }
 
   canvas {
@@ -839,7 +862,8 @@
       <div v-show="showControls" class="gui enabled">
         <div class="controls">
           <div class="general-controls">
-            <a class="control control-tooltip" data-tooltip="Help" v-on:click="toggleHelp" v-show="visibleControls.help">
+            <a class="control control-tooltip" data-tooltip="Help" v-on:click="toggleHelp"
+               v-show="visibleControls.help">
               <i class="fas fa-question"></i>
             </a>
             <a class="control control-tooltip" data-tooltip="Download" v-on:click="downloadModel"
